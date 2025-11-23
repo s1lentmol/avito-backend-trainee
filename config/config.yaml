@@ -1,9 +1,9 @@
 db:
      username: postgres
-     password: ""
-     host: postgres
+     password: "postgres"
+     host: localhost
      port: 5432
      name: postgres
 app:
     name: "reviewer-assigner"
-    port: ""
+    port: "8080"
