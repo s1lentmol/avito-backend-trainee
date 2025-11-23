@@ -1,0 +1,36 @@
+services:
+  reviewer-assigner:
+    build: .
+    ports:
+      - "${ENV_APP_PORT:-8080}:${ENV_APP_PORT:-8080}"
+    environment:
+      - ENV_NAMESPACE=${ENV_NAMESPACE:-local}
+      - ENV_APP_NAME=${ENV_APP_NAME:-reviewer-assigner}
+      - ENV_APP_PORT=${ENV_APP_PORT:-8080}
+      - ENV_DB_USERNAME=${ENV_DB_USERNAME:-postgres}
+      - ENV_DB_PASSWORD=${ENV_DB_PASSWORD:-postgres}
+      - ENV_DB_HOST=${ENV_DB_HOST:-postgres}
+      - ENV_DB_PORT=${ENV_DB_PORT:-5432}
+      - ENV_DB_NAME=${ENV_DB_NAME:-reviewer-assigner}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${ENV_DB_USERNAME:-postgres}
+      - POSTGRES_PASSWORD=${ENV_DB_PASSWORD:-postgres}
+      - POSTGRES_DB=${ENV_DB_NAME:-reviewer-assigner}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+
+volumes:
+  pgdata:
